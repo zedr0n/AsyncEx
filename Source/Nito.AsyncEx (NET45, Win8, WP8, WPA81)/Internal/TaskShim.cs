@@ -24,6 +24,11 @@ namespace Nito.AsyncEx.Internal
             return Task.Run(func);
         }
 
+        public static Task<T> Run<T>(Task<T> task)
+        {
+            return Task.Run(async () => await task);
+        }
+
         public static Task<T> Run<T>(Func<Task<T>> func)
         {
             return Task.Run(func);

@@ -71,6 +71,20 @@ namespace Nito.AsyncEx
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncLazy&lt;T&gt;"/> class.
+        /// </summary>
+        /// <param name="task">The asynchronous delegate that is invoked on a background thread to produce the value when it is needed. May not be <c>null</c>.</param>
+        public AsyncLazy(Task<T> task)
+        {
+            _instance = new Lazy<Task<T>>(() =>
+            {
+                var ret = TaskShim.Run(task);
+                //Enlightenment.Trace.AsyncLazy_Started(this, ret);
+                return ret;
+            });
+        }
+
+        /// <summary>
         /// Gets a semi-unique identifier for this asynchronous lazy instance.
         /// </summary>
         public int Id
@@ -85,6 +99,8 @@ namespace Nito.AsyncEx
         {
             get { return _instance.IsValueCreated; }
         }
+
+        public Task<T> Task => _instance.Value;
 
         /// <summary>
         /// Asynchronous infrastructure support. This method permits instances of <see cref="AsyncLazy&lt;T&gt;"/> to be await'ed.
